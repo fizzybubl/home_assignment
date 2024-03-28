@@ -45,7 +45,7 @@ class CustomChromeDriver(WebDriver):
 
     def write_text(self, locator: LocatorType, text: str, delay: float = 0.05):
         """Method used to write text in text fields."""
-        element = self.get_element(*locator)
+        element = self.get_element(locator)
         if not delay:
             element.send_keys(text)
         else:

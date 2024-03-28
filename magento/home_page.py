@@ -79,7 +79,7 @@ class CheckoutPageData(PageData):
         "streetAddress2": (By.CSS_SELECTOR, "[name='street[2]']"),
         "city": (By.CSS_SELECTOR, "[name='city']"),
         "state": (By.CSS_SELECTOR, "[name='region_id']"),
-        "postCode": (By.CSS_SELECTOR, "[name='[postcode]']"),
+        "postCode": (By.CSS_SELECTOR, "[name='postcode']"),
         "country": (By.CSS_SELECTOR, "[name='country_id']"),
         "phoneNumber": (By.CSS_SELECTOR, "[name='telephone']"),
         "product": (By.CSS_SELECTOR, ".product-item-details"),
@@ -133,6 +133,7 @@ class MagentoPage(Page):
             size
             color
         """
+        wait_for_page_to_load(self.driver, [], [])
         products = self.driver.list_elements(self.__locators__["productCard"])
         product: CustomWebElement = random.choice(products)
         self.driver.move_to_element(product)
@@ -142,6 +143,7 @@ class MagentoPage(Page):
 
         random_size = random.choice(product.list_elements(self.__locators__["sizeBox"]))
         random_size.click()
+        wait_for_page_to_load(self.driver, [], [])
         product.get_element(self.__locators__["addToCart"]).click()
         wait_for_element_to_be_visible(self.driver, By.CSS_SELECTOR, "[data-ui-id='message-success']")
         return {
