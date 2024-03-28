@@ -6,6 +6,7 @@ from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.support.select import Select
 
 from config import ROOT_PATH
 from drivers.custom_web_element import CustomWebElement
@@ -52,6 +53,9 @@ class CustomFirefoxDriver(WebDriver):
             for key in text:
                 element.send_keys(key)
                 time.sleep(delay)
+
+    def select_option_from_dropdown(self, locator: LocatorType, option: str):
+        Select(self.get_element(locator)).select_by_value(option)
 
 
 def firefox_profile():

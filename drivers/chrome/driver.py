@@ -5,6 +5,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.chrome.service import Service as ChromeService
 from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.support.select import Select
 
 from config import ROOT_PATH
 from drivers.custom_web_element import CustomWebElement
@@ -51,6 +52,9 @@ class CustomChromeDriver(WebDriver):
             for key in text:
                 element.send_keys(key)
                 time.sleep(delay)
+
+    def select_option_from_dropdown(self, locator: LocatorType, option: str):
+        Select(self.get_element(locator)).select_by_value(option)
 
 
 def chrome_options():

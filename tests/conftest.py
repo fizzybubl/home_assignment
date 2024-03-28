@@ -5,4 +5,5 @@ from drivers import webdriver_factory
 
 @pytest.fixture(scope="session")
 def driver():
-    yield webdriver_factory()
+    with webdriver_factory() as driver:
+        yield driver

@@ -1,8 +1,8 @@
 import time
 from typing import Self
 
-from selenium.webdriver import ActionChains
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.select import Select
 
 from drivers.types import LocatorType
 from drivers.waiters.element_waiters import wait_for_element_to_be_clickable
@@ -32,6 +32,9 @@ class CustomWebElement(WebElement):
             for key in text:
                 element.send_keys(key)
                 time.sleep(delay)
+
+    def select_option_from_dropdown(self, locator: LocatorType, option: str):
+        Select(self.get_element(locator)).select_by_value(option)
 
     @classmethod
     def _new(cls, element: WebElement):
