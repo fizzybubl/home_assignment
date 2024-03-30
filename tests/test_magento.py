@@ -19,14 +19,33 @@ class TestPositiveFlow:
         checkout_pom.click_next()
         order_data = checkout_pom.get_order_data()
         assert order_data["sub_total"] == product_data["price"]
-        assert order_data["total_amount"] == order_data["sub_total"] + order_data["shipping_fee"]
+        assert float(order_data["total_amount"].strip("$")) == float(order_data["sub_total"].strip("$")) + \
+               float(order_data["shipping_fee"].strip("$"))
         checkout_pom.place_order()
         assert checkout_pom.is_success_message_visible()
 
 
 class TestNegativeFlow:
     def test_verify_required_checkout_fields(self, driver):
-        ...
+        magento_pom = MagentoPage(driver, MagentoPageData)
+        magento_pom.navigate_to_category(["topsCategory", "jacketsCategory"])
+        product_data = magento_pom.add_random_product_to_cart()
+        magento_pom.proceed_to_checkout()
+        checkout_pom = CheckoutPage(driver, CheckoutPageData)
+        checkout_pom.fill_in_shipping_details(ShippingData(email_address="",
+                                                           firstname="",
+                                                           lastname="",
+                                                           street_address_line_1="",
+                                                           city="",
+                                                           postcode="",
+                                                           phone_number="",
+                                                           state=""))
 
-    def test_verify_payment_methods(self, driver):
-        ...
+    def test_invalid_fields(self, driver):
+        magento_pom = MagentoPage(driver, MagentoPageData)
+        magento_pom.navigate_to_category(["topsCategory", "jacketsCategory"])
+        product_data = magento_pom.add_random_product_to_cart()
+        magento_pom.proceed_to_checkout()
+        checkout_pom = CheckoutPage(driver, CheckoutPageData)
+        checkout_pom.fill_in_shipping_details(ShippingData(email_address="asfagsgasg",
+                                                           postcode="agalkghakga"))

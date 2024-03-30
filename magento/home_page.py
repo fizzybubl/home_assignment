@@ -98,8 +98,8 @@ class CheckoutPageData(PageData):
         "showItemsInCart": (By.CSS_SELECTOR, ".block.items-in-cart"),
         "placeOrderButton": (By.CSS_SELECTOR, "button.checkout"),
         "orderTotal": (By.CSS_SELECTOR, "[data-th='Order Total'] span"),
-        "orderSubtotal": (By.CSS_SELECTOR, "[data-th='Order Subtotal'] span"),
-        "shippingFee": (By.CSS_SELECTOR, "[data-th='Shipping'] span"),
+        "orderSubtotal": (By.CSS_SELECTOR, "[data-th='Cart Subtotal']"),
+        "shippingFee": (By.CSS_SELECTOR, "[data-th='Shipping']"),
         "sucessfulMessage": (By.XPATH, "//*[text()='Thank you for your purchase!']")
     }
 
@@ -139,6 +139,7 @@ class CheckoutPage(Page):
 
     def click_next(self):
         self.driver.click_element(self.__locators__["nextButton"])
+        wait_for_page_to_load(self.driver, [], [(By.CSS_SELECTOR, ".loader")])
 
     def place_order(self):
         self.driver.click_element(self.__locators__["placeOrderButton"])
@@ -154,6 +155,7 @@ class CheckoutPage(Page):
         }
 
     def is_success_message_visible(self):
+        wait_for_page_to_load(self.driver, [], [(By.CSS_SELECTOR, ".loader")])
         return self.driver.is_visible(self.__locators__["sucessfulMessage"])
 
 
