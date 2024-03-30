@@ -6,7 +6,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 from drivers.types import ByType
 
 
-# TODO: Add auto closing for webdrivers after they finished scrapping
 # TODO: Improve waiters to that they wait for an element to be on screen (visible, present, transitioned)
 
 

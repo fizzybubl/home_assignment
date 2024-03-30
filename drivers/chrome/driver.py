@@ -43,7 +43,7 @@ class CustomChromeDriver(WebDriver):
         else:
             ActionChains(self).move_to_element(self.get_element(locator)).perform()
 
-    def write_text(self, locator: LocatorType, text: str, delay: float = 0.05):
+    def write_text(self, locator: LocatorType, text: str, delay: float = 0.005):
         """Method used to write text in text fields."""
         element = self.get_element(locator)
         if not delay:
@@ -55,6 +55,16 @@ class CustomChromeDriver(WebDriver):
 
     def select_option_from_dropdown(self, locator: LocatorType, option: str):
         Select(self.get_element(locator)).select_by_value(option)
+
+    def is_visible(self, locator: LocatorType, timeout=5):
+        self.implicitly_wait(timeout)
+        try:
+            self.find_element(*locator)
+            return True
+        except Exception:
+            return False
+        finally:
+            self.implicitly_wait(0)
 
 
 def chrome_options():

@@ -31,6 +31,11 @@ class Page:
         wait_for_page_to_load(self.driver, self.__landmarks__, self.__loaders__)
 
 
+_COUNTY_TO_CODE = {
+    "Giurgiu": "297"
+}
+
+
 @dataclass
 class ShippingData:
     email_address: str = "mock_email@provider.com"
@@ -44,7 +49,7 @@ class ShippingData:
     postcode: str = "000222"
     phone_number: str = "0799234234"
     company: str = "Mock company"
-    state: str = "Giurgiu"
+    state: str = _COUNTY_TO_CODE["Giurgiu"]
 
 
 class MagentoPageData(PageData):
@@ -83,7 +88,19 @@ class CheckoutPageData(PageData):
         "country": (By.CSS_SELECTOR, "[name='country_id']"),
         "phoneNumber": (By.CSS_SELECTOR, "[name='telephone']"),
         "product": (By.CSS_SELECTOR, ".product-item-details"),
-        "nextButton": (By.CSS_SELECTOR, "button.action.continue")
+        "nextButton": (By.CSS_SELECTOR, "button.action.continue"),
+        "productInCart": (By.CSS_SELECTOR, ".minicart-items > .product-item"),
+        "viewProductDetails": (By.CSS_SELECTOR, ".product.options span"),
+        "productName": (By.CSS_SELECTOR, ".product-item-name"),
+        "productPrice": (By.CSS_SELECTOR, ".price"),
+        "productColor": (By.CSS_SELECTOR, ".item-options .values:nth-child(4)"),
+        "productSize": (By.CSS_SELECTOR, ".item-options .values:nth-child(2)"),
+        "showItemsInCart": (By.CSS_SELECTOR, ".block.items-in-cart"),
+        "placeOrderButton": (By.CSS_SELECTOR, "button.checkout"),
+        "orderTotal": (By.CSS_SELECTOR, "[data-th='Order Total'] span"),
+        "orderSubtotal": (By.CSS_SELECTOR, "[data-th='Order Subtotal'] span"),
+        "shippingFee": (By.CSS_SELECTOR, "[data-th='Shipping'] span"),
+        "sucessfulMessage": (By.XPATH, "//*[text()='Thank you for your purchase!']")
     }
 
 
@@ -106,11 +123,38 @@ class CheckoutPage(Page):
         self.driver.select_option_from_dropdown(self.__locators__["country"], shipping_data.country)
         self.driver.select_option_from_dropdown(self.__locators__["state"], shipping_data.state)
 
+    def get_order_product_list(self):
+        self.driver.click_element(self.__locators__["showItemsInCart"])
+        products_in_cart = self.driver.list_elements(self.__locators__["productInCart"])
+        product_data = []
+        for prod in products_in_cart:
+            prod.click_element(self.__locators__["viewProductDetails"])
+            product_data.append({
+                "price": prod.get_element(self.__locators__["productPrice"]).text,
+                "name": prod.get_element(self.__locators__["productName"]).text,
+                "color": prod.get_element(self.__locators__["productColor"]).text,
+                "size": prod.get_element(self.__locators__["productSize"]).text
+            })
+        return product_data
+
     def click_next(self):
-        ...
+        self.driver.click_element(self.__locators__["nextButton"])
 
     def place_order(self):
-        ...
+        self.driver.click_element(self.__locators__["placeOrderButton"])
+
+    def get_order_total(self):
+        return self.driver.get_element(self.__locators__["orderTotal"]).text
+
+    def get_order_data(self):
+        return {
+            "total_amount": self.driver.get_element(self.__locators__["orderTotal"]).text,
+            "sub_total": self.driver.get_element(self.__locators__["orderSubtotal"]).text,
+            "shipping_fee": self.driver.get_element(self.__locators__["shippingFee"]).text
+        }
+
+    def is_success_message_visible(self):
+        return self.driver.is_visible(self.__locators__["sucessfulMessage"])
 
 
 class MagentoPage(Page):
