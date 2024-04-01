@@ -29,6 +29,7 @@ class CustomChromeDriver(WebDriver):
         self.get(url)
 
     def get_element(self, locator: LocatorType) -> CustomWebElement:
+        wait_for_element_to_be_visible(self, *locator)
         return CustomWebElement(self.find_element(*locator))
 
     def list_elements(self, locator: LocatorType) -> list[CustomWebElement]:
