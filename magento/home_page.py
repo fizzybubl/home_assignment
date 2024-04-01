@@ -1,6 +1,7 @@
 import random
 from dataclasses import dataclass
 
+from selenium.webdriver import ActionChains, Keys
 from selenium.webdriver.common.by import By
 
 from drivers import WebDriverType
@@ -203,3 +204,11 @@ class MagentoPage(Page):
         self.driver.click_element(self.__locators__["cartButton"])
         self.driver.click_element(self.__locators__["proceedToCheckout"])
         wait_for_element_to_be_invisible(self.driver, By.ID, "checkout-loader")
+
+
+def is_error_visible(driver, error_message):
+    return driver.is_visible((By.XPATH, f"//*[contains(text(), '{error_message}')]"))
+
+
+def are_errors_visible(driver, error_message, count):
+    return len(driver.list_elements((By.XPATH, f"//*[contains(text(), '{error_message}')]"))) == count

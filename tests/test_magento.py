@@ -1,6 +1,8 @@
 import pytest
+from selenium.webdriver import Keys
 
-from magento.home_page import MagentoPage, MagentoPageData, CheckoutPage, CheckoutPageData, ShippingData
+from magento.home_page import MagentoPage, MagentoPageData, CheckoutPage, CheckoutPageData, ShippingData, \
+    are_errors_visible
 
 pytestmark = [pytest.mark.ui]
 
@@ -29,23 +31,27 @@ class TestNegativeFlow:
     def test_verify_required_checkout_fields(self, driver):
         magento_pom = MagentoPage(driver, MagentoPageData)
         magento_pom.navigate_to_category(["topsCategory", "jacketsCategory"])
-        product_data = magento_pom.add_random_product_to_cart()
+        magento_pom.add_random_product_to_cart()
         magento_pom.proceed_to_checkout()
         checkout_pom = CheckoutPage(driver, CheckoutPageData)
-        checkout_pom.fill_in_shipping_details(ShippingData(email_address="",
-                                                           firstname="",
-                                                           lastname="",
-                                                           street_address_line_1="",
-                                                           city="",
-                                                           postcode="",
-                                                           phone_number="",
+        checkout_pom.fill_in_shipping_details(ShippingData(email_address=Keys.ENTER,
+                                                           firstname=Keys.SPACE,
+                                                           lastname=Keys.SPACE,
+                                                           street_address_line_1=Keys.SPACE,
+                                                           city=Keys.SPACE,
+                                                           postcode=Keys.SPACE,
+                                                           phone_number=Keys.SPACE,
+                                                           country="",
                                                            state=""))
+        assert are_errors_visible(driver, "This is a required field.", 8)
 
     def test_invalid_fields(self, driver):
         magento_pom = MagentoPage(driver, MagentoPageData)
         magento_pom.navigate_to_category(["topsCategory", "jacketsCategory"])
-        product_data = magento_pom.add_random_product_to_cart()
+        magento_pom.add_random_product_to_cart()
         magento_pom.proceed_to_checkout()
         checkout_pom = CheckoutPage(driver, CheckoutPageData)
         checkout_pom.fill_in_shipping_details(ShippingData(email_address="asfagsgasg",
                                                            postcode="agalkghakga"))
+        assert are_errors_visible(driver, "Please enter a valid email address (Ex: johndoe@domain.com)", 1)
+        assert are_errors_visible(driver, "Provided Zip/Postal Code seems to be invalid", 1)

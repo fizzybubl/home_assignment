@@ -10,7 +10,7 @@ from selenium.webdriver.support.select import Select
 from config import ROOT_PATH
 from drivers.custom_web_element import CustomWebElement
 from drivers.types import LocatorType
-from drivers.waiters.element_waiters import wait_for_element_to_be_clickable
+from drivers.waiters.element_waiters import wait_for_element_to_be_clickable, wait_for_element_to_be_visible
 
 _driver_executable = "chromedriver.exe"
 
@@ -32,6 +32,7 @@ class CustomChromeDriver(WebDriver):
         return CustomWebElement(self.find_element(*locator))
 
     def list_elements(self, locator: LocatorType) -> list[CustomWebElement]:
+        wait_for_element_to_be_visible(self, *locator)
         return [CustomWebElement(web_element) for web_element in self.find_elements(*locator)]
 
     def click_element(self, locator: LocatorType):
